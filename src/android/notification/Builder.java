@@ -26,6 +26,7 @@ package de.appplant.cordova.plugin.notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
@@ -121,6 +122,7 @@ public class Builder {
     public Notification build() {
         Uri sound     = options.getSoundUri();
         int smallIcon = options.getSmallIcon();
+        String style  = options.getStyleType();
         NotificationCompat.Builder builder;
 
         builder = new NotificationCompat.Builder(context)
@@ -142,6 +144,69 @@ public class Builder {
         } else {
             builder.setSmallIcon(options.getSmallIcon());
             builder.setLargeIcon(options.getIconBitmap());
+        }
+
+        if (style != null) {
+            String title = options.getBigContentTitle();
+            String summary = options.getBigContentSummary();
+
+            if (style.equalsIgnoreCase("list")) {
+                NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+                String[] lines = options.getInboxLines();
+                
+                builder.setContentText(options.getSmallText());
+
+                if (lines != null && lines.length > 0) {
+                    for (String line : lines) {
+                        inboxStyle.addLine(line);
+                    }
+                }
+
+                if (title != null) {
+                    inboxStyle.setBigContentTitle(title);
+                }
+                if (summary != null) {
+                    inboxStyle.setSummaryText(summary);
+                }
+
+                builder.setStyle(inboxStyle);
+
+            } else if (style.equalsIgnoreCase("wrap")) {
+                NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+                    .bigText(options.getBigText());
+
+                builder.setContentText(options.getSmallText());
+
+                if (title != null) {
+                    bigTextStyle.setBigContentTitle(title);
+                }
+                if (summary != null) {
+                    bigTextStyle.setSummaryText(summary);
+                }
+
+                builder.setStyle(bigTextStyle);
+
+            } else if (style.equalsIgnoreCase("picture")) {
+                NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+                Bitmap bigLargeIcon = options.getBigLargeIcon();
+                Bitmap bigPicture = options.getBigPicture();
+
+                if (bigLargeIcon != null) {
+                    bigPictureStyle.bigLargeIcon(bigLargeIcon);
+                }
+                if (bigPicture != null) {
+                    bigPictureStyle.bigLargeIcon(bigPicture);
+                }
+
+                if (title != null) {
+                    bigPictureStyle.setBigContentTitle(title);
+                }
+                if (summary != null) {
+                    bigPictureStyle.setSummaryText(summary);
+                }
+
+                builder.setStyle(bigPictureStyle);
+            }
         }
 
         applyDeleteReceiver(builder);
