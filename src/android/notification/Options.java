@@ -55,6 +55,12 @@ public class Options {
     // Action buttons
     private Action[] actions = null;
 
+    // Style type
+    private String styleType = null;
+
+    // Style options
+    private JSONObject styleOptions = null;
+
     // Application context
     private final Context context;
 
@@ -85,6 +91,7 @@ public class Options {
         parseInterval();
         parseAssets();
         parseActions();
+        parseStyle();
 
         return this;
     }
@@ -207,6 +214,17 @@ public class Options {
         Action.addCategory(categoryIdentifier, actionsForCategory);
 
         return actionsForCategory;
+    }
+
+    /*
+     * Parse style.
+     */
+    private void parseStyle() {
+        this.styleOptions = options.optJSONObject("style");
+
+        if (styleOptions != null) {
+            this.styleType = styleOptions.optString("type");
+        }
     }
 
     /**
@@ -396,6 +414,117 @@ public class Options {
     public Action[] getActions () {
         return actions;
     }
+
+    /**
+     * Style name
+     */
+    public String getStyleType () {
+
+        return styleType;
+    }
+
+    /**
+     * Big content title
+     */
+    public String getBigContentTitle () {
+
+        if (styleOptions != null && styleOptions.has("title")) {
+            return styleOptions.optString("title");
+        }
+
+        return null;
+    }
+    /**
+     * Big text
+     */
+    public String getBigText () {
+
+        if (styleOptions != null && styleOptions.has("longText")) {
+            String text = styleOptions.optString("longText");
+
+            if (text != null) {
+                return text;
+            }
+        }
+
+        return getText();
+    }
+    /**
+     * Small text
+     */
+    public String getSmallText () {
+
+        if (styleOptions != null && styleOptions.has("shortText")) {
+            String text = styleOptions.optString("shortText");
+
+            if (text != null) {
+                return text;
+            }
+        }
+
+        return getText();
+    }
+    /**
+     * Inbox lines
+     */
+    public String[] getInboxLines () {       
+        return getBigText().split("[\r\n]+");
+    }
+
+    /**
+     * Inbox lines
+     */
+    public String getBigContentSummary () {
+
+        if (styleOptions != null && styleOptions.has("summary")) {
+            return styleOptions.optString("summary");
+        }
+
+        return null;
+    }
+
+    /**
+     * Bitmap for big large icon.
+     */
+    public Bitmap getBigLargeIcon () {
+        if (styleOptions == null) {
+            return null;
+        }
+
+        Bitmap bmp;
+
+        try {
+            Uri uri = Uri.parse(styleOptions.optString("largeIcon"));
+            bmp = assets.getIconFromUri(uri);
+        } catch (Exception e){
+            e.printStackTrace();
+            bmp = null;
+        }
+
+        return bmp;
+    }
+
+    /**
+     * Bitmap for big picture.
+     */
+    public Bitmap getBigPicture () {
+        if (styleOptions == null) {
+            return null;
+        }
+
+        Bitmap bmp;
+
+        try {
+            Uri uri = Uri.parse(styleOptions.optString("picture"));
+            bmp = assets.getIconFromUri(uri);
+        } catch (Exception e){
+            e.printStackTrace();
+            bmp = null;
+        }
+
+        return bmp;
+    }
+
 
     /**
      * JSON object as string.

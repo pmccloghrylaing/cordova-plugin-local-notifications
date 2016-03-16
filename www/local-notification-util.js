@@ -71,6 +71,7 @@ exports.applyPlatformSpecificOptions = function () {
         defaults.autoClear = true;
         defaults.led       = 'FF0000';
         defaults.color     = undefined;
+        defaults.style     = undefined;
         break;
     }
 

@@ -78,7 +78,17 @@ cordova.plugins.notification.local.schedule({
     every: "week",
     sound: "file://sounds/reminder.mp3",
     icon: "http://icons.com/?cal_id=1",
-    data: { meetingId:"123#fg8" }
+    data: { meetingId:"123#fg8" },
+    /* Android only - shows when expanded */
+    style: {
+        type: 'wrap', // or 'picture' or 'list'
+        shortText: 'Short', // defaults to "text" value
+        longText: 'Multiline\ntext', // defaults to "text" value
+        title: 'big title',
+        summary: 'my summary'
+        // largeIcon: ...
+        // picture: ...
+    }
 });
 
 cordova.plugins.notification.local.on("click", function (notification) {
